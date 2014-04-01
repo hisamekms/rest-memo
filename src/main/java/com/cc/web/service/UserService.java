@@ -8,7 +8,6 @@ import com.cc.domain.user.User;
 import com.cc.domain.user.UserRepository;
 import com.cc.infra.web.service.CRUDService;
 import java.util.List;
-import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -45,6 +44,7 @@ public class UserService extends CRUDService<UserRepository, User, String> {
 
     @DELETE
     @Path("{id}")
+    @Override
     public void remove(@PathParam("id") String id) {
         super.remove(id);
     }

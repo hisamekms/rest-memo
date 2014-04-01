@@ -8,7 +8,6 @@ import com.cc.domain.memo.Memo;
 import com.cc.domain.memo.MemoRepository;
 import com.cc.infra.web.service.CRUDService;
 import java.util.List;
-import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;

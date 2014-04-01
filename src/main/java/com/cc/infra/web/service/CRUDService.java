@@ -5,11 +5,16 @@
 package com.cc.infra.web.service;
 
 import com.cc.infra.entity.PersistentEntity;
+import com.cc.infra.logging.LoggerFactory;
 import com.cc.infra.repository.JPARepository;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Set;
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 
@@ -20,22 +25,23 @@ import org.slf4j.Logger;
 public abstract class CRUDService<R extends JPARepository<E, K>, E extends PersistentEntity<K>, K extends Serializable> {
     
     @Inject
-    protected Logger logger;
+    private BeanManager beanManager;
+    
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
     
     protected R repository;
 
-    public CRUDService() throws InstantiationException, IllegalAccessException {
+    
+    @PostConstruct
+    public void setUp() {
         Type superType = getClass().getGenericSuperclass();
         
         if (superType instanceof ParameterizedType) {
             ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
-            Class<R> repositoryClass = (Class<R>) type.getActualTypeArguments()[0].getClass();
-            try {
-                repository = repositoryClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException ex) {
-               logger.error(null, ex);
-               throw ex;
-            }
+            Class<R> repositoryClass = (Class<R>) type.getActualTypeArguments()[0];
+            Set<Bean<?>> beans = beanManager.getBeans(repositoryClass);
+            Bean<?> bean = beanManager.resolve(beans);
+            repository = (R) beanManager.getReference(bean, repositoryClass, beanManager.createCreationalContext(bean));
         }
     }
     

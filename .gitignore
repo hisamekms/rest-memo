@@ -4,3 +4,5 @@
 *.jar
 *.war
 *.ear
+/target/
+/src/main/setup/glassfish-resources.xml
